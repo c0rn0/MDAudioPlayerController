@@ -30,7 +30,7 @@
 	AudioFileID fileID = nil;
 	OSStatus error = noErr;
 	
-	error = AudioFileOpenURL((CFURLRef)self.filePath, kAudioFileReadPermission, 0, &fileID);
+	error = AudioFileOpenURL((__bridge CFURLRef)self.filePath, kAudioFileReadPermission, 0, &fileID);
 	if (error != noErr) {
         NSLog(@"AudioFileOpenURL failed");
     }
@@ -44,7 +44,7 @@
 	
     rawID3Tag = (char *)malloc(id3DataSize);
     if (rawID3Tag == NULL)
-        NSLog(@"could not allocate %d bytes of memory for ID3 tag", id3DataSize);
+        NSLog(@"could not allocate %d bytes of memory for ID3 tag", (unsigned int)id3DataSize);
     
     error = AudioFileGetProperty(fileID, kAudioFilePropertyID3Tag, &id3DataSize, rawID3Tag);
     if( error != noErr )
@@ -91,7 +91,7 @@
 	
 	free(rawID3Tag);
 	
-	return (NSDictionary*)piDict;
+	return (__bridge NSDictionary*)piDict;
 }
 
 - (NSString *)title

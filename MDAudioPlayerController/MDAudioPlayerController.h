@@ -106,7 +106,7 @@
 - (void)previous;
 - (void)next;
 - (void)volumeSliderMoved:(UISlider*)sender;
-- (void)progressSliderMoved:(UISlider*)sender;
+- (IBAction)progressSliderMoved:(UISlider*)sender;
 
 - (void)toggleShuffle;
 - (void)toggleRepeat;

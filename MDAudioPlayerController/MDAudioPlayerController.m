@@ -59,7 +59,7 @@ static const CGFloat kDefaultReflectionOpacity = 0.40;
 
 void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 {
-	MDAudioPlayerController *vc = (MDAudioPlayerController *)userData;
+	MDAudioPlayerController *vc = (__bridge MDAudioPlayerController *)userData;
 	if (interruptionState == kAudioSessionBeginInterruption)
 		vc.interrupted = YES;
 	else if (interruptionState == kAudioSessionEndInterruption)
@@ -179,17 +179,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	UIBarButtonItem *songsListBarButton = [[UIBarButtonItem alloc] initWithCustomView:toggleButton];
 	
 	navItem.leftBarButtonItem = doneButton;
-	[doneButton release];
-	doneButton = nil;
 	
 	navItem.rightBarButtonItem = songsListBarButton;
-	[songsListBarButton release];
-	songsListBarButton = nil;
 	
-	[navItem release];
-	navItem = nil;
-	
-	AudioSessionInitialize(NULL, NULL, interruptionListenerCallback, self);
+	AudioSessionInitialize(NULL, NULL, interruptionListenerCallback, (__bridge void *)(self));
 	AudioSessionSetActive(true);
 	UInt32 sessionCategory = kAudioSessionCategory_MediaPlayback;
 	AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);	
@@ -203,8 +196,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	titleLabel.textColor = [UIColor whiteColor];
 	titleLabel.shadowColor = [UIColor blackColor];
 	titleLabel.shadowOffset = CGSizeMake(0, -1);
-	titleLabel.textAlignment = UITextAlignmentCenter;
-	titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+	titleLabel.textAlignment = NSTextAlignmentCenter;
+	titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 	[self.view addSubview:titleLabel];
 	
 	self.artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 2, 195, 12)];
@@ -214,8 +207,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	artistLabel.textColor = [UIColor lightGrayColor];
 	artistLabel.shadowColor = [UIColor blackColor];
 	artistLabel.shadowOffset = CGSizeMake(0, -1);
-	artistLabel.textAlignment = UITextAlignmentCenter;
-	artistLabel.lineBreakMode = UILineBreakModeTailTruncation;
+	artistLabel.textAlignment = NSTextAlignmentCenter;
+	artistLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 	[self.view addSubview:artistLabel];
 	
 	self.albumLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 27, 195, 12)];
@@ -225,13 +218,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	albumLabel.textColor = [UIColor lightGrayColor];
 	albumLabel.shadowColor = [UIColor blackColor];
 	albumLabel.shadowOffset = CGSizeMake(0, -1);
-	albumLabel.textAlignment = UITextAlignmentCenter;
-	albumLabel.lineBreakMode = UILineBreakModeTailTruncation;
+	albumLabel.textAlignment = NSTextAlignmentCenter;
+	albumLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 	[self.view addSubview:albumLabel];
 
-	[navigationBar release];
-	navigationBar = nil;
-	
 	duration.adjustsFontSizeToFitWidth = YES;
 	currentTime.adjustsFontSizeToFitWidth = YES;
 	progressSlider.minimumValue = 0.0;	
@@ -270,14 +260,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 10)];
 	v.backgroundColor = [UIColor clearColor];
 	[self.songTableView setTableFooterView:v];
-	[v release];
-	v = nil;
 
 	UIImageView *buttonBackground = [[UIImageView alloc] initWithFrame:CGRectMake(0, 44 + 320, self.view.bounds.size.width, 96)];
 	buttonBackground.image = [[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerBarBackground" ofType:@"png"]] stretchableImageWithLeftCapWidth:0 topCapHeight:0];
 	[self.view addSubview:buttonBackground];
-	[buttonBackground release];
-	buttonBackground  = nil;
 		
 	self.playButton = [[UIButton alloc] initWithFrame:CGRectMake(144, 370, 40, 40)];
 	[playButton setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerPlay" ofType:@"png"]] forState:UIControlStateNormal];
@@ -348,7 +334,12 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 - (void)dismissAudioPlayer
 {
 	[player stop];
-	[self.parentViewController dismissModalViewControllerAnimated:YES];
+    if ([self respondsToSelector:@selector(presentingViewController)]){
+        [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+    else {
+        [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
+    }
     
     if([_delegate respondsToSelector:@selector(audioPlayerDidClose:)]) {
         [_delegate audioPlayerDidClose:self];
@@ -423,7 +414,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		indexLabel.shadowColor = [UIColor blackColor];
 		indexLabel.backgroundColor = [UIColor clearColor];
 		indexLabel.textColor = [UIColor whiteColor];
-		indexLabel.textAlignment = UITextAlignmentCenter;
+		indexLabel.textAlignment = NSTextAlignmentCenter;
 		[overlayView addSubview:indexLabel];
 		
 		self.duration = [[UILabel alloc] initWithFrame:CGRectMake(272, 21, 48, 21)];
@@ -440,7 +431,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		currentTime.shadowColor = [UIColor blackColor];
 		currentTime.backgroundColor = [UIColor clearColor];
 		currentTime.textColor = [UIColor whiteColor];
-		currentTime.textAlignment = UITextAlignmentRight;
+		currentTime.textAlignment = NSTextAlignmentRight;
 		[overlayView addSubview:currentTime];
 		
 		duration.adjustsFontSizeToFitWidth = YES;
@@ -579,7 +570,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
     }
     
 	self.player = newAudioPlayer;
-	[newAudioPlayer release];
 	
 	player.delegate = self;
 	player.volume = volumeSlider.value;
@@ -635,7 +625,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
     }
     
 	self.player = newAudioPlayer;
-	[newAudioPlayer release];
 	
 	player.delegate = self;
 	player.volume = volumeSlider.value;
@@ -699,7 +688,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 											  cancelButtonTitle:@"OK" 
 											  otherButtonTitles:nil];
 	[alertView show];
-	[alertView release];
 }
 
 - (void)audioPlayerBeginInterruption:(AVAudioPlayer *)player
@@ -727,8 +715,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-	[player release];
-	player = nil;
 }
 
 #pragma mark Table view methods
@@ -753,7 +739,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
     MDAudioPlayerTableViewCell *cell = (MDAudioPlayerTableViewCell *)[aTableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (cell == nil)
 	{
-		cell = [[[MDAudioPlayerTableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[MDAudioPlayerTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 	}
 	
 	cell.title = [[soundFiles objectAtIndex:indexPath.row] title];
@@ -798,7 +784,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
     }
     
 	self.player = newAudioPlayer;
-	[newAudioPlayer release];
 	
 	player.delegate = self;
 	player.volume = volumeSlider.value;
@@ -901,36 +886,5 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh)
 {
 	self.reflectionView = nil;
 }
-
-- (void)dealloc
-{
-	[soundFiles release], soundFiles = nil;
-	[soundFilesPath release], soundFiles = nil;
-	[player release], player = nil;
-	[gradientLayer release], gradientLayer = nil;
-	[playButton release], playButton = nil;
-	[pauseButton release], pauseButton = nil;
-	[nextButton release], nextButton = nil;
-	[previousButton release], previousButton = nil;
-	[toggleButton release], toggleButton = nil;
-	[repeatButton release], repeatButton = nil;
-	[shuffleButton release], shuffleButton = nil;
-	[currentTime release], currentTime = nil;
-	[duration release], duration = nil;
-	[indexLabel release], indexLabel = nil;
-	[titleLabel release], titleLabel = nil;
-	[artistLabel release], artistLabel = nil;
-	[albumLabel release], albumLabel = nil;
-	[volumeSlider release], volumeSlider = nil;
-	[progressSlider release], progressSlider = nil;
-	[songTableView release], songTableView = nil;
-	[artworkView release], artworkView = nil;
-	[reflectionView release], reflectionView = nil;
-	[containerView release], containerView = nil;
-	[overlayView release], overlayView = nil;
-	[updateTimer invalidate], updateTimer = nil;
-	[super dealloc];
-}
-
 
 @end

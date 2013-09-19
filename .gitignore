@@ -1,4 +1,6 @@
-*.DSStore
+*.DS_Store
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 */build
+project.xcworkspace/
+xcuserdata/
