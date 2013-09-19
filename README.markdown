@@ -14,6 +14,17 @@ I wrote MDAudioPlayerController for use in one of my own apps and realized after
 If you find it helpful, a Paypal donation would be very appreciated (mattdonnelly [at] me [dot] com) 
 
 
+Easy Setup (BETA)
+-----------------
+
+A Cocoapod Podspec file has been added that will allow you to do a pod install to get up and running quickly. Eventually we'll post it to the cocoapods repo. For now, here's what your podfile should look like:
+
+    platform :ios
+    pod 'MDAudioPlayerController', :git => 'https://github.com/c0rn0/MDAudioPlayerController.git'
+    
+(The sample project hasn't been updated or tested against a cocoapod install. If you find any issues please let us know. This should work fine for your new project though.) 
+
+
 Features
 --------
 
