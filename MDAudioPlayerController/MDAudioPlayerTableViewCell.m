@@ -36,7 +36,7 @@ static UIFont *textFont = nil;
 {
 	if (self == [MDAudioPlayerTableViewCell class])
 	{
-		textFont = [[UIFont boldSystemFontOfSize:15] retain];
+		textFont = [UIFont boldSystemFontOfSize:15];
 	}
 }
 
@@ -47,39 +47,26 @@ static UIFont *textFont = nil;
 		contentView = [[MDTableViewCellView alloc] initWithFrame:CGRectZero];
 		contentView.opaque = NO;
 		[self addSubview:contentView];
-		[contentView release];
 	}
 	
 	return self;
 }
 
-- (void)dealloc
-{
-	[title release];
-	[number release];
-	[duration release];
-    [super dealloc];
-}
-
-
 - (void)setTitle:(NSString *)s
 {
-	[title release];
-	title = [s copy];
+    title = s;
 	[self setNeedsDisplay]; 
 }
 
 - (void)setNumber:(NSString *)s
 {
-	[number release];
-	number = [s copy];
+    number = s;
 	[self setNeedsDisplay]; 
 }
 
 - (void)setDuration:(NSString *)s
 {
-	[duration release];
-	duration = [s copy];
+    duration = s;
 	[self setNeedsDisplay]; 
 }
 
@@ -120,9 +107,9 @@ static UIFont *textFont = nil;
 	
 	[textColor set];
 	
-	[title drawInRect:CGRectMake(75, 12, 185, 15) withFont:textFont lineBreakMode:UILineBreakModeTailTruncation];
-	[number drawInRect:CGRectMake(5, 12, 35, 15) withFont:textFont lineBreakMode:UILineBreakModeTailTruncation];
-	[duration drawInRect:CGRectMake(270, 12, 45, 15) withFont:textFont lineBreakMode:UILineBreakModeTailTruncation alignment:UITextAlignmentRight];
+	[title drawInRect:CGRectMake(75, 12, 185, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
+	[number drawInRect:CGRectMake(5, 12, 35, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail];
+	[duration drawInRect:CGRectMake(270, 12, 45, 15) withFont:textFont lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
 	
 	[dividerColor set];
 	

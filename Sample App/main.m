@@ -6,12 +6,23 @@
 //  Copyright 2010 Matt Donnelly. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "MDAudioPlayerSampleAppDelegate.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    int retVal = UIApplicationMain(argc, argv, nil, nil);
-    [pool release];
-    return retVal;
+    @autoreleasepool {
+        
+        int retVal = -1;
+        @try {
+            retVal = UIApplicationMain(argc, argv, nil, NSStringFromClass([MDAudioPlayerSampleAppDelegate class]));
+        }
+        @catch (NSException* exception) {
+            NSLog(@"Uncaught exception: %@", exception.description);
+            NSLog(@"Stack trace: %@", [exception callStackSymbols]);
+        }
+        return retVal;
+        
+    }
+    
 }
