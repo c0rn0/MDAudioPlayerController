@@ -94,7 +94,7 @@
 @property (nonatomic, assign) BOOL repeatOne;
 @property (nonatomic, assign) BOOL shuffle;
 
-- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index;
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title;
 - (void)dismissAudioPlayer;
 - (void)showSongFiles;
 - (void)showOverlayView;

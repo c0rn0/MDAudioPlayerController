@@ -10,7 +10,11 @@
 #import "MDAudioPlayerTableViewCell.h"
 
 @interface MDAudioPlayerController ()
+
+@property (nonatomic, strong) NSString *playerTitle;
+
 - (UIImage *)reflectedImage:(UIButton *)fromImage withHeight:(NSUInteger)height;
+
 @end
 
 @implementation MDAudioPlayerController
@@ -82,7 +86,11 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 
 - (void)updateViewForPlayerState:(AVAudioPlayer *)p
 {
-	titleLabel.text = [[soundFiles objectAtIndex:selectedIndex] title];
+    if (_playerTitle) {
+        titleLabel.text = _playerTitle;
+    } else {
+        titleLabel.text = [[soundFiles objectAtIndex:selectedIndex] title];
+    }
 	artistLabel.text = [[soundFiles objectAtIndex:selectedIndex] artist];
 	albumLabel.text = [[soundFiles objectAtIndex:selectedIndex] album];
 	
@@ -128,13 +136,14 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		volumeSlider.value = p.volume;
 }
 
-- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title
 {
 	if (self = [super init]) 
 	{
 		self.soundFiles = songs;
 		self.soundFilesPath = path;
 		selectedIndex = index;
+        _playerTitle = title;
 				
 		NSError *error = nil;
 				
@@ -349,7 +358,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 - (void)showSongFiles
 {
 	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:5];
+	[UIView setAnimationDuration:1];
 	
 	[UIView setAnimationTransition:([self.songTableView superview] ?
 									UIViewAnimationTransitionFlipFromLeft : UIViewAnimationTransitionFlipFromRight)
@@ -362,7 +371,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[UIView commitAnimations];
 	
 	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:5];
+	[UIView setAnimationDuration:1];
 	
 	[UIView setAnimationTransition:([self.songTableView superview] ?
 									UIViewAnimationTransitionFlipFromLeft : UIViewAnimationTransitionFlipFromRight)
