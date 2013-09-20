@@ -120,7 +120,7 @@
 	
 	for (NSString *song in fileArray)
 	{
-		MDAudioFile *audioFile = [[MDAudioFile alloc] initWithPath:[NSURL fileURLWithPath:song]];
+		MDAudioFile *audioFile = [[MDAudioFile alloc] initWithPath:[NSURL fileURLWithPath:song] andTitle:@"Alt Title" displayID3Tags:NO];
 		[songs addObject:audioFile];
 	}
 	
