@@ -8,18 +8,27 @@
 
 #import "MDAudioFile.h"
 
+@interface MDAudioFile ()
 
-@implementation MDAudioFile
+@property (nonatomic, strong) NSString* alternativeTitle;
+
+@end
+
+@implementation MDAudioFile {
+    BOOL _displayID3Tags;
+}
 
 @synthesize filePath;
 @synthesize fileInfoDict;
 
-- (MDAudioFile *)initWithPath:(NSURL *)path
+- (MDAudioFile *)initWithPath:(NSURL *)path andTitle:(NSString*)title displayID3Tags:(BOOL)displayID3Tags
 {
 	if (self = [super init]) 
 	{
 		self.filePath = path;
 		self.fileInfoDict = [self songID3Tags];
+        _alternativeTitle = title;
+        _displayID3Tags = displayID3Tags;
 	}
 	
 	return self;
@@ -96,6 +105,11 @@
 
 - (NSString *)title
 {
+    
+    if (_alternativeTitle) {
+        return _alternativeTitle;
+    }
+    
 	if ([fileInfoDict objectForKey:[NSString stringWithUTF8String:kAFInfoDictionary_Title]]) {
 		return [fileInfoDict objectForKey:[NSString stringWithUTF8String:kAFInfoDictionary_Title]];
 	}
@@ -111,6 +125,9 @@
 
 - (NSString *)artist
 {
+    if (!_displayID3Tags) {
+        return @"";
+    }
 	if ([fileInfoDict objectForKey:[NSString stringWithUTF8String:kAFInfoDictionary_Artist]])
 		return [fileInfoDict objectForKey:[NSString stringWithUTF8String:kAFInfoDictionary_Artist]];
 	else
@@ -119,6 +136,9 @@
 
 - (NSString *)album
 {
+    if (!_displayID3Tags) {
+        return @"";
+    }
 	if ([fileInfoDict objectForKey:[NSString stringWithUTF8String:kAFInfoDictionary_Album]])
 		return [fileInfoDict objectForKey:[NSString stringWithUTF8String:kAFInfoDictionary_Album]];
 	else
