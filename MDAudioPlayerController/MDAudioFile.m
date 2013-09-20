@@ -11,6 +11,7 @@
 @interface MDAudioFile ()
 
 @property (nonatomic, strong) NSString* alternativeTitle;
+@property (nonatomic, strong) NSString* artworkFilename;
 
 @end
 
@@ -21,7 +22,7 @@
 @synthesize filePath;
 @synthesize fileInfoDict;
 
-- (MDAudioFile *)initWithPath:(NSURL *)path andTitle:(NSString*)title displayID3Tags:(BOOL)displayID3Tags
+- (MDAudioFile *)initWithPath:(NSURL *)path andTitle:(NSString*)title displayID3Tags:(BOOL)displayID3Tags artworkFilename:(NSString*)artworkFilename
 {
 	if (self = [super init]) 
 	{
@@ -29,6 +30,7 @@
 		self.fileInfoDict = [self songID3Tags];
         _alternativeTitle = title;
         _displayID3Tags = displayID3Tags;
+        _artworkFilename = artworkFilename;
 	}
 	
 	return self;
@@ -160,6 +162,17 @@
 
 - (UIImage *)coverImage
 {
+    
+    if (_artworkFilename) {
+        
+		NSArray *parts = [_artworkFilename componentsSeparatedByString:@"."];
+        
+        if (parts.count == 2) {
+            return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:parts[0] ofType:parts[1]]];
+        }
+        
+    }
+    
 	return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerNoArtwork" ofType:@"png"]];
 }
 

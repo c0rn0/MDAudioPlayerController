@@ -120,11 +120,11 @@
 	
 	for (NSString *song in fileArray)
 	{
-		MDAudioFile *audioFile = [[MDAudioFile alloc] initWithPath:[NSURL fileURLWithPath:song] andTitle:@"Alt Title" displayID3Tags:NO];
+		MDAudioFile *audioFile = [[MDAudioFile alloc] initWithPath:[NSURL fileURLWithPath:song] andTitle:@"Track Title" displayID3Tags:NO artworkFilename:nil];
 		[songs addObject:audioFile];
 	}
 	
-	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row];
+	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row andTitle:@"Player Title"];
 	[self.navigationController presentViewController:audioPlayer animated:YES completion:nil];
 }
 

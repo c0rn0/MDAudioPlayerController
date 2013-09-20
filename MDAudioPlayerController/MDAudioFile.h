@@ -20,12 +20,13 @@
 @property (nonatomic, retain) NSDictionary *fileInfoDict;
 
 /*
- * @param path           The path where the audio file is located.
- * @param title          The alternative title to display, if 'nil' it will display
- *                       filename.ext.
- * @param displayID3Tags 'YES' when tags must display, 'NO' otherwise.
+ * @param path            The path where the audio file is located.
+ * @param title           The alternative title to display, if 'nil' it will display
+ *                        filename.ext.
+ * @param displayID3Tags  'YES' when tags must display, 'NO' otherwise.
+ * @param artworkFilename The file name of the artwork to display.
  */
-- (MDAudioFile *)initWithPath:(NSURL *)path andTitle:(NSString*)title displayID3Tags:(BOOL)displayID3Tags;
+- (MDAudioFile *)initWithPath:(NSURL *)path andTitle:(NSString*)title displayID3Tags:(BOOL)displayID3Tags artworkFilename:(NSString*)artworkFilename;
 - (NSDictionary *)songID3Tags;
 - (NSString *)title;
 - (NSString *)artist;
