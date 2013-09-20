@@ -19,7 +19,13 @@
 @property (nonatomic, retain) NSURL *filePath;
 @property (nonatomic, retain) NSDictionary *fileInfoDict;
 
-- (MDAudioFile *)initWithPath:(NSURL *)path;
+/*
+ * @param path           The path where the audio file is located.
+ * @param title          The alternative title to display, if 'nil' it will display
+ *                       filename.ext.
+ * @param displayID3Tags 'YES' when tags must display, 'NO' otherwise.
+ */
+- (MDAudioFile *)initWithPath:(NSURL *)path andTitle:(NSString*)title displayID3Tags:(BOOL)displayID3Tags;
 - (NSDictionary *)songID3Tags;
 - (NSString *)title;
 - (NSString *)artist;
