@@ -102,7 +102,7 @@
 	
 	free(rawID3Tag);
 	
-	return (__bridge NSDictionary*)piDict;
+	return (NSDictionary*)CFBridgingRelease(piDict);
 }
 
 - (NSString *)title
