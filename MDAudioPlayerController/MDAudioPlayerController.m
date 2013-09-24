@@ -17,7 +17,10 @@
 
 @end
 
-@implementation MDAudioPlayerController
+@implementation MDAudioPlayerController {
+    BOOL _forceIphoneWidth;
+    BOOL _alreadyDismissed;
+}
 
 static const CGFloat kDefaultReflectionFraction = 0.65;
 static const CGFloat kDefaultReflectionOpacity = 0.40;
@@ -59,6 +62,8 @@ static const CGFloat kDefaultReflectionOpacity = 0.40;
 @synthesize repeatAll;
 @synthesize repeatOne;
 @synthesize shuffle;
+
+@synthesize logEnabled;
 
 
 void interruptionListenerCallback (void *userData, UInt32 interruptionState)
@@ -136,7 +141,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		volumeSlider.value = p.volume;
 }
 
-- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth
 {
 	if (self = [super init]) 
 	{
@@ -144,6 +149,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		self.soundFilesPath = path;
 		selectedIndex = index;
         _playerTitle = title;
+        _forceIphoneWidth = forceIphoneWidth;
 				
 		NSError *error = nil;
 				
@@ -164,6 +170,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
+    
+    float selfViewFrameSizeWidth = _forceIphoneWidth ? 320 : self.view.frame.size.width;
+    float selfViewBoundsSizeWidth = _forceIphoneWidth ? 320 : self.view.bounds.size.width;
 	
 	self.view.backgroundColor = [UIColor blackColor];
 	
@@ -171,8 +180,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	updateTimer = nil;
 	
-	UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-	navigationBar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+	UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, selfViewFrameSizeWidth, 44)];
 	navigationBar.barStyle = UIBarStyleBlackOpaque;
 	[self.view addSubview:navigationBar];
 	
@@ -235,7 +243,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	currentTime.adjustsFontSizeToFitWidth = YES;
 	progressSlider.minimumValue = 0.0;	
 	
-	self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 44, self.view.bounds.size.width, self.view.bounds.size.height - 44)];
+	self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 44, selfViewBoundsSizeWidth, self.view.bounds.size.height - 44)];
 	[self.view addSubview:containerView];
 	
 	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
@@ -251,7 +259,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	reflectionView.alpha = kDefaultReflectionFraction;
 	[self.containerView addSubview:reflectionView];
 	
-	self.songTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 368)];
+	self.songTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, selfViewBoundsSizeWidth, 368)];
 	self.songTableView.delegate = self;
 	self.songTableView.dataSource = self;
 	self.songTableView.separatorColor = [UIColor colorWithRed:0.986 green:0.933 blue:0.994 alpha:0.10];
@@ -270,7 +278,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	v.backgroundColor = [UIColor clearColor];
 	[self.songTableView setTableFooterView:v];
 
-	UIImageView *buttonBackground = [[UIImageView alloc] initWithFrame:CGRectMake(0, 44 + 320, self.view.bounds.size.width, 96)];
+	UIImageView *buttonBackground = [[UIImageView alloc] initWithFrame:CGRectMake(0, 44 + 320, selfViewBoundsSizeWidth, 96)];
 	buttonBackground.image = [[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"AudioPlayerBarBackground" ofType:@"png"]] stretchableImageWithLeftCapWidth:0 topCapHeight:0];
 	[self.view addSubview:buttonBackground];
 		
@@ -340,6 +348,14 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self updateViewForPlayerState:player];
 }
 
+-(void)viewDidDisappear:(BOOL)animated {
+    
+    [super viewDidDisappear:animated];
+    if (player.isPlaying) {
+        [player stop];
+    }
+}
+
 - (void)dismissAudioPlayer
 {
 	[player stop];
@@ -353,6 +369,24 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
     if([_delegate respondsToSelector:@selector(audioPlayerDidClose:)]) {
         [_delegate audioPlayerDidClose:self];
     }
+    
+    //Mem management
+    self.player = nil;
+    if (self.updateTimer) {
+        [self.updateTimer invalidate];
+        self.updateTimer = nil;
+    }
+    
+    if (!_alreadyDismissed) {
+        
+        if (_dismissalBlock) {
+            _dismissalBlock();
+        }
+        
+        _alreadyDismissed = YES;
+        
+    }
+    
 }
 
 - (void)showSongFiles
@@ -398,10 +432,13 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 }
 
 - (void)showOverlayView
-{	
+{
+    
+    float selfViewBoundsSizeWidth = _forceIphoneWidth ? 320 : self.view.bounds.size.width;
+    
 	if (overlayView == nil) 
 	{		
-		self.overlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 76)];
+		self.overlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, selfViewBoundsSizeWidth, 76)];
 		overlayView.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.6];
 		overlayView.opaque = NO;
 		
@@ -894,6 +931,14 @@ CGContextRef MyCreateBitmapContext(int pixelsWide, int pixelsHigh)
 - (void)viewDidUnload
 {
 	self.reflectionView = nil;
+}
+
+-(void)dealloc {
+    
+    if (logEnabled) {
+        NSLog(@"[%s] mem clean up", __FUNCTION__);
+    }
+    
 }
 
 @end
