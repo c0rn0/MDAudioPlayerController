@@ -124,7 +124,7 @@
 		[songs addObject:audioFile];
 	}
 	
-	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row andTitle:@"Player Title"];
+	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row andTitle:@"Player Title" forceIphoneWidth:YES];
 	[self.navigationController presentViewController:audioPlayer animated:YES completion:nil];
 }
 
