@@ -100,6 +100,8 @@ typedef void (^AudioPlayerDismissalBlock)(void);
 
 @property (nonatomic, copy) AudioPlayerDismissalBlock dismissalBlock;
 
+@property (nonatomic, strong) UIColor* currentTrackIndicatorColor;
+
 - (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth;
 - (void)dismissAudioPlayer;
 - (void)showSongFiles;
