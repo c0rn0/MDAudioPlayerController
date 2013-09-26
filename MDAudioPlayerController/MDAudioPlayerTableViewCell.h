@@ -24,6 +24,8 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *number;
 @property (nonatomic, copy) NSString *duration;
+//Set this property to specify custom color for current track indicator
+@property (nonatomic, strong) UIColor* currentTrackIndicatorColor;
 
 @property (nonatomic, assign) BOOL isEven;
 @property (nonatomic, assign) BOOL isSelectedIndex;

@@ -125,6 +125,8 @@
 	}
 	
 	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row andTitle:@"Player Title" forceIphoneWidth:YES];
+    //Configure custom color here, otherwise it defaults to Blue
+    audioPlayer.currentTrackIndicatorColor = [UIColor whiteColor];
 	[self.navigationController presentViewController:audioPlayer animated:YES completion:nil];
 }
 

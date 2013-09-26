@@ -122,6 +122,22 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		[artworkView setImage:[[soundFiles objectAtIndex:selectedIndex] coverImage] forState:UIControlStateNormal];
 		reflectionView.image = [self reflectedImage:artworkView withHeight:artworkView.bounds.size.height * kDefaultReflectionFraction];
 	}
+    
+    if (songTableView) {
+        
+        //Update current track indicator
+        for (MDAudioPlayerTableViewCell *cell in [songTableView visibleCells])
+        {
+            cell.isSelectedIndex = NO;
+        }
+        
+        MDAudioPlayerTableViewCell *cell = (MDAudioPlayerTableViewCell *)[songTableView cellForRowAtIndexPath:[NSIndexPath indexPathForItem:selectedIndex inSection:0]];
+        if (self.currentTrackIndicatorColor) {
+            cell.currentTrackIndicatorColor = self.currentTrackIndicatorColor;
+        }
+        cell.isSelectedIndex = YES;
+        
+    }
 	
 	if (repeatOne || repeatAll || shuffle)
 		nextButton.enabled = YES;
@@ -786,6 +802,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	if (cell == nil)
 	{
 		cell = [[MDAudioPlayerTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        if (self.currentTrackIndicatorColor) {
+            cell.currentTrackIndicatorColor = self.currentTrackIndicatorColor;
+        }
 	}
 	
 	cell.title = [[soundFiles objectAtIndex:indexPath.row] title];
