@@ -125,7 +125,7 @@ static UIFont *textFont = nil;
 	
 	if (self.isSelectedIndex)
 	{		
-		[self.highlighted ? [UIColor whiteColor] : [UIColor colorWithRed:0.090 green:0.274 blue:0.873 alpha:1.000] set];
+		[self.highlighted ? [UIColor whiteColor] : (self.currentTrackIndicatorColor)? self.currentTrackIndicatorColor : [UIColor colorWithRed:0.090 green:0.274 blue:0.873 alpha:1.000] set];
 		
 		CGContextMoveToPoint(context, 45, 17);
 		CGContextAddLineToPoint(context, 45, 27);
