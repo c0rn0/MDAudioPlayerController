@@ -9,6 +9,8 @@
 #import "MDAudioPlayerController.h"
 #import "MDAudioPlayerTableViewCell.h"
 
+static MDAudioPlayerController* self_ref_from_c_lib = NULL;
+
 @interface MDAudioPlayerController ()
 
 @property (nonatomic, strong) NSString *playerTitle;
@@ -68,11 +70,13 @@ static const CGFloat kDefaultReflectionOpacity = 0.40;
 
 void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 {
-	MDAudioPlayerController *vc = (__bridge MDAudioPlayerController *)userData;
+    if (self_ref_from_c_lib == NULL) {
+        return;
+    }
 	if (interruptionState == kAudioSessionBeginInterruption)
-		vc.interrupted = YES;
+		self_ref_from_c_lib.interrupted = YES;
 	else if (interruptionState == kAudioSessionEndInterruption)
-		vc.interrupted = NO;
+		self_ref_from_c_lib.interrupted = NO;
 }
 
 -(void)updateCurrentTimeForPlayer:(AVAudioPlayer *)p
@@ -215,10 +219,16 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	navItem.rightBarButtonItem = songsListBarButton;
 	
-	AudioSessionInitialize(NULL, NULL, interruptionListenerCallback, (__bridge void *)(self));
+    self_ref_from_c_lib = self;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        AudioSessionInitialize(NULL, NULL, interruptionListenerCallback, (__bridge void *)(self));
+    });
+    
 	AudioSessionSetActive(true);
 	UInt32 sessionCategory = kAudioSessionCategory_MediaPlayback;
-	AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);	
+	AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
 	
 	MDAudioFile *selectedSong = [self.soundFiles objectAtIndex:selectedIndex];
 	
@@ -717,7 +727,6 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 
 #pragma mark -
 #pragma mark AVAudioPlayer delegate
-
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)p successfully:(BOOL)flag
 {
