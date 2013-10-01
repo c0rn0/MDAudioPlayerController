@@ -124,7 +124,7 @@
 		[songs addObject:audioFile];
 	}
 	
-	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row andTitle:@"Player Title" forceIphoneWidth:YES artworkScaleAspectFit:NO artworkReflectionHidden:NO showSongFilesByDefault:NO];
+	MDAudioPlayerController *audioPlayer = [[MDAudioPlayerController alloc] initWithSoundFiles:songs atPath:[[NSBundle mainBundle] bundlePath] andSelectedIndex:indexPath.row andTitle:@"Player Title" forceIphoneWidth:YES useArtworkContentMode:NO artworkContentMode:UIViewContentModeScaleAspectFit artworkReflectionHidden:NO showSongFilesByDefault:NO];
     //Configure custom color here, otherwise it defaults to Blue
     audioPlayer.currentTrackIndicatorColor = [UIColor whiteColor];
 	[self.navigationController presentViewController:audioPlayer animated:YES completion:nil];
