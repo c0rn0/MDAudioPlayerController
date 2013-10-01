@@ -22,6 +22,9 @@ static MDAudioPlayerController* self_ref_from_c_lib = NULL;
 @implementation MDAudioPlayerController {
     BOOL _forceIphoneWidth;
     BOOL _alreadyDismissed;
+    BOOL _artworkScaleAspectFit;
+    BOOL _artworkReflectionHidden;
+    BOOL _showSongFilesByDefault;
 }
 
 static const CGFloat kDefaultReflectionFraction = 0.65;
@@ -161,7 +164,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		volumeSlider.value = p.volume;
 }
 
-- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth  artworkScaleAspectFit:(BOOL)artworkScaleAspectFit artworkReflectionHidden:(BOOL)artworkReflectionHidden showSongFilesByDefault:(BOOL)showSongFilesByDefault
 {
 	if (self = [super init]) 
 	{
@@ -170,6 +173,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		selectedIndex = index;
         _playerTitle = title;
         _forceIphoneWidth = forceIphoneWidth;
+        _artworkScaleAspectFit = artworkScaleAspectFit;
+        _artworkReflectionHidden = artworkReflectionHidden;
+        _showSongFilesByDefault = showSongFilesByDefault;
 				
 		NSError *error = nil;
 				
@@ -273,6 +279,9 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:containerView];
 	
 	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+    if (_artworkScaleAspectFit) {
+        artworkView.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    }
 	[artworkView setImage:[selectedSong coverImage] forState:UIControlStateNormal];
 	[artworkView addTarget:self action:@selector(showOverlayView) forControlEvents:UIControlEventTouchUpInside];
 	artworkView.showsTouchWhenHighlighted = NO;
@@ -281,9 +290,15 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[containerView addSubview:artworkView];
 	
 	self.reflectionView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 320, 320, 96)];
+    if (_artworkScaleAspectFit) {
+        reflectionView.contentMode = UIViewContentModeScaleAspectFit;
+    }
 	reflectionView.image = [self reflectedImage:artworkView withHeight:artworkView.bounds.size.height * kDefaultReflectionFraction];
 	reflectionView.alpha = kDefaultReflectionFraction;
 	[self.containerView addSubview:reflectionView];
+    if (_artworkReflectionHidden) {
+        reflectionView.hidden = YES;
+    }
 	
 	self.songTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, selfViewBoundsSizeWidth, 368)];
 	self.songTableView.delegate = self;
@@ -353,6 +368,10 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	[self updateViewForPlayerInfo:player];
 	[self updateViewForPlayerState:player];
+    
+    if (_showSongFilesByDefault) {
+        [self showSongFiles];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated

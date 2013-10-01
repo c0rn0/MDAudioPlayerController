@@ -102,7 +102,7 @@ typedef void (^AudioPlayerDismissalBlock)(void);
 
 @property (nonatomic, strong) UIColor* currentTrackIndicatorColor;
 
-- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth;
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth artworkScaleAspectFit:(BOOL)artworkScaleAspectFit artworkReflectionHidden:(BOOL)artworkReflectionHidden showSongFilesByDefault:(BOOL)showSongFilesByDefault;
 - (void)dismissAudioPlayer;
 - (void)showSongFiles;
 - (void)showOverlayView;
