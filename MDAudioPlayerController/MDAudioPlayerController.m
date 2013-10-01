@@ -22,7 +22,8 @@ static MDAudioPlayerController* self_ref_from_c_lib = NULL;
 @implementation MDAudioPlayerController {
     BOOL _forceIphoneWidth;
     BOOL _alreadyDismissed;
-    BOOL _artworkScaleAspectFit;
+    BOOL _useArtworkContentMode;
+    UIViewContentMode _artworkContentMode;
     BOOL _artworkReflectionHidden;
     BOOL _showSongFilesByDefault;
 }
@@ -164,7 +165,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		volumeSlider.value = p.volume;
 }
 
-- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth  artworkScaleAspectFit:(BOOL)artworkScaleAspectFit artworkReflectionHidden:(BOOL)artworkReflectionHidden showSongFilesByDefault:(BOOL)showSongFilesByDefault
+- (MDAudioPlayerController *)initWithSoundFiles:(NSMutableArray *)songs atPath:(NSString *)path andSelectedIndex:(int)index andTitle:(NSString*)title forceIphoneWidth:(BOOL)forceIphoneWidth  useArtworkContentMode:(BOOL)useArtworkContentMode artworkContentMode:(UIViewContentMode)artworkContentMode artworkReflectionHidden:(BOOL)artworkReflectionHidden showSongFilesByDefault:(BOOL)showSongFilesByDefault
 {
 	if (self = [super init]) 
 	{
@@ -173,7 +174,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 		selectedIndex = index;
         _playerTitle = title;
         _forceIphoneWidth = forceIphoneWidth;
-        _artworkScaleAspectFit = artworkScaleAspectFit;
+        _useArtworkContentMode = useArtworkContentMode;
+        _artworkContentMode = artworkContentMode;
         _artworkReflectionHidden = artworkReflectionHidden;
         _showSongFilesByDefault = showSongFilesByDefault;
 				
@@ -279,8 +281,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[self.view addSubview:containerView];
 	
 	self.artworkView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-    if (_artworkScaleAspectFit) {
-        artworkView.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    if (_useArtworkContentMode) {
+        artworkView.imageView.contentMode = _artworkContentMode;
     }
 	[artworkView setImage:[selectedSong coverImage] forState:UIControlStateNormal];
 	[artworkView addTarget:self action:@selector(showOverlayView) forControlEvents:UIControlEventTouchUpInside];
@@ -290,8 +292,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	[containerView addSubview:artworkView];
 	
 	self.reflectionView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 320, 320, 96)];
-    if (_artworkScaleAspectFit) {
-        reflectionView.contentMode = UIViewContentModeScaleAspectFit;
+    if (_useArtworkContentMode) {
+        reflectionView.contentMode = _artworkContentMode;
     }
 	reflectionView.image = [self reflectedImage:artworkView withHeight:artworkView.bounds.size.height * kDefaultReflectionFraction];
 	reflectionView.alpha = kDefaultReflectionFraction;
