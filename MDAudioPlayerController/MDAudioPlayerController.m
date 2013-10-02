@@ -231,7 +231,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        AudioSessionInitialize(NULL, NULL, interruptionListenerCallback, (__bridge void *)(self));
+        AudioSessionInitialize(NULL, NULL, interruptionListenerCallback, NULL);
     });
     
 	AudioSessionSetActive(true);
@@ -433,6 +433,8 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
         _alreadyDismissed = YES;
         
     }
+    
+    self_ref_from_c_lib = NULL;
     
 }
 
