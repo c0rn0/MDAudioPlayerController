@@ -10,13 +10,16 @@
 
 
 @interface MDTableViewCellView : UIView
+
+@property (nonatomic, weak) MDAudioPlayerTableViewCell *parent;
+
 @end
 
 @implementation MDTableViewCellView
 
 - (void)drawRect:(CGRect)r
 {
-	[(MDAudioPlayerTableViewCell *)[self superview] drawContentView:r];
+    [_parent drawContentView:r];
 }
 
 @end
@@ -45,6 +48,7 @@ static UIFont *textFont = nil;
 	if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) 
 	{
 		contentView = [[MDTableViewCellView alloc] initWithFrame:CGRectZero];
+        ((MDTableViewCellView*)contentView).parent = self;
 		contentView.opaque = NO;
 		[self addSubview:contentView];
 	}
