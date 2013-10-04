@@ -98,14 +98,30 @@ static UIFont *textFont = nil;
 	
 	UIColor *bgColor;
 	
-	if (self.highlighted)
+	if (self.highlighted) {
+        
 		bgColor = [UIColor clearColor];
-	else
-		bgColor = self.isEven ? [UIColor colorWithWhite:0.0 alpha:0.25] : [UIColor clearColor];
+        self.backgroundColor = [UIColor clearColor];
+        
+    } else {
+        
+        if (self.isEven) {
+            
+            bgColor = [UIColor colorWithWhite:0.0 alpha:0.25];
+            self.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.25];
+            
+        } else {
+            
+            bgColor = [UIColor clearColor];
+            self.backgroundColor = [UIColor clearColor];
+            
+        }
+        
+    }
 	
 	UIColor *textColor = [UIColor whiteColor];
 	UIColor *dividerColor = self.highlighted ? [UIColor clearColor] : [UIColor colorWithRed:0.986 green:0.933 blue:0.994 alpha:0.13];
-	
+    
 	[bgColor set];
 	CGContextFillRect(context, r);
 	
