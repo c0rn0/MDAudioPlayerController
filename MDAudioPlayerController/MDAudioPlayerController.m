@@ -204,6 +204,11 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 {
 	[super viewDidLoad];
     
+    if (!MD_IOS7 && MD_IPAD) {
+        CGSize size = CGSizeMake(320, 480);
+        self.contentSizeForViewInPopover = size;
+    }
+    
     float selfViewFrameSizeWidth = _forceIphoneWidth ? 320 : self.view.frame.size.width;
     float selfViewBoundsSizeWidth = _forceIphoneWidth ? 320 : self.view.bounds.size.width;
 	
@@ -248,7 +253,7 @@ void interruptionListenerCallback (void *userData, UInt32 interruptionState)
 	
 	MDAudioFile *selectedSong = [self.soundFiles objectAtIndex:selectedIndex];
 	
-	self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 14, 195, 12)];
+    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 14, 195, 14)];
 	titleLabel.text = [selectedSong title];
 	titleLabel.font = [UIFont boldSystemFontOfSize:12];
 	titleLabel.backgroundColor = [UIColor clearColor];
