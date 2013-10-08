@@ -86,6 +86,7 @@ typedef void (^AudioPlayerDismissalBlock)(void);
 
 @property (nonatomic, retain) UIButton *artworkView;
 @property (nonatomic, retain) UIImageView *reflectionView;
+@property (nonatomic, retain) UIView *mainContainerView;
 @property (nonatomic, retain) UIView *containerView;
 @property (nonatomic, retain) UIView *overlayView;
 
