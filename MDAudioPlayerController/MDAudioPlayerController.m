@@ -9,6 +9,10 @@
 #import "MDAudioPlayerController.h"
 #import "MDAudioPlayerTableViewCell.h"
 
+#ifndef NSFoundationVersionNumber_iOS_6_1
+#define NSFoundationVersionNumber_iOS_6_1 993.0
+#endif
+
 #define MD_IPAD UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad
 // returns YES if on iOS 7+
 #define MD_IOS7 (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
